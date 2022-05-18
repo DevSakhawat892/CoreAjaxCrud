@@ -1,0 +1,172 @@
+﻿@model IEnumerable<CoreAjax.Models.Student>
+
+@{
+   ViewData["Title"] = "Index";
+}
+
+<h2>All Students</h2>
+<div class="row">
+   <div class="col-md-12">
+      <div class="form-group">
+         <input type="hidden" id="hdnId" />
+         <label class="col-form-label">Name</label>
+         <input type="text" id="txtname" class="from-control" />
+      </div>
+      <div class="form-group">
+         <label class="col-form-label">Address</label>
+         <input type="text" id="txtAdd" class="from-control" />
+      </div>
+      <div class="form-group">
+         <input type="button" id="btnSave" onclick="Save()" class="btn btn-primary" value="Save" />
+         <input type="button" id="btnUpdate" onclick="Update()" class="btn btn-primary" value="Update" />
+        
+      </div>
+   </div>
+   <div class="col-md-12">
+      <table id="tbl" class="table table-bordered">
+         <thead>
+            <tr>
+               <td>Name</td>
+               <td>Address</td>
+            </tr>
+         </thead>
+         <tbody class="text-center"></tbody>
+      </table>
+   </div>
+</div>
+
+
+@section scripts{
+<script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+   <script>
+      $(document).ready(function () {
+         load();
+         $("#btnSave").show();
+         $("#btnUpdate").hide();
+      })
+      function load() {
+         $.ajax({
+            url: "/Students/Get",
+            method: "GET",
+            type: "application/json",
+            dataType: "JSON",
+            success: function (output) {
+               //console.log(output.data)
+               var h = "";
+               $.each(output.data, function (k, v) {
+                  //console.log(v)                  
+                  //console.log(v.Address)
+                  h += "<tr><td>" + v.name + "</td>";
+                  h += "<td>" + v.address + "</td>";
+                  h += "<td><button id='btnedit' class='btn btn-info mr-2' title='Edit " + v.name +
+                     " s information' onclick='edit(" + v.id + ")'  >Edit</button><button id='btnRemove' class='btn btn-danger' " + v.name +
+                     " onclick='remove(" + v.id + ")'  >Delete</button> </td></tr>";
+                  $("#tbl tbody").html(h);
+                  //console.log(h)
+               });
+            },
+            error: function (er) {
+               console.log(er)
+               //alert(er);
+            }
+
+         });
+      }
+
+
+      function edit(id) {
+         $("#btnSave").hide();
+         $("#btnUpdate").show();
+         $.ajax({
+            url: "/Students/GetbyID/" + id,
+            method: "GET",
+            type: "application/json",
+            dataType: "JSON",
+            success: function (output) {
+               console.log(output.data)
+               $("#hdnId").val(output.data.id)
+               $("#txtname").val(output.data.name)
+               $("#txtAdd").val(output.data.address)
+            },
+            error: function (er) {
+               console.log(er)
+            }
+
+         })
+      }
+
+      function remove(id) {
+         $.ajax({
+            url: "/Students/Delete/" + id,
+            method: "POST",
+            type: "application/json",
+            dataType: "JSON",
+            success: function (output) {
+               console.log(output.data)
+               alert("Are you sure?");
+               load();
+            },
+            error: function (er) {
+               console.log(er)
+            }
+         })
+      }
+
+      function Update() {
+         var obj = {
+            Id: $("#hdnId").val(),
+            Name: $("#txtname").val(),
+            Address: $("#txtAdd").val(),
+         }
+         console.log(obj)
+         $.ajax({
+            url: "/Students/Update",
+            method: "POST",
+            type: "application/json",
+            dataType: "JSON",
+            data: obj,
+            success: function (output) {
+               load();
+               clearAll();
+               $("#btnSave").show();
+               $("#btnUpdate").hide();
+            },
+            error: function (er) {
+               console.log(er)
+            }
+
+         })
+      }
+
+
+      function Save() {
+         var obj = {
+            Name: $("#txtname").val(),
+            Address: $("#txtAdd").val(),
+         }
+         console.log(obj)
+         $.ajax({
+            url: "/Students/Save",
+            method: "POST",
+            type: "application/json",
+            dataType: "JSON",
+            data: obj,
+            success: function (output) {
+               load();
+               clearAll();
+            },
+            error: function (er) {
+               console.log(er)
+            }
+
+         })
+      }
+
+      function clearAll() {
+         $("#hdnId").val('')
+         $("#txtname").val('')
+         $("#txtAdd").val('')
+      }
+   </script>
+
+}

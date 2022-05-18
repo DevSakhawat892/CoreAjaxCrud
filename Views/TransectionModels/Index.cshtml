@@ -1,0 +1,126 @@
+﻿@model IEnumerable<CoreAjax.Models.TransectionModel>
+
+@{
+   ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+   <a asp-action="Create">Create New</a>
+</p>
+<div class="row">
+   <div class="col-md-6">
+      <table class="table">
+         <thead>
+            <tr>
+               <th>
+                  @Html.DisplayNameFor(model => model.AccountNumber)
+               </th>
+               <th>
+                  @Html.DisplayNameFor(model => model.BeneficiaryName)
+               </th>
+               <th>
+                  @Html.DisplayNameFor(model => model.BankName)
+               </th>
+               <th>
+                  @Html.DisplayNameFor(model => model.SWIFTCode)
+               </th>
+               <th>
+                  @Html.DisplayNameFor(model => model.Amount)
+               </th>
+               <th>
+                  @Html.DisplayNameFor(model => model.Date)
+               </th>
+               <th></th>
+            </tr>
+         </thead>
+         <tbody>
+            @foreach (var item in Model)
+            {
+               <tr>
+                  <td>
+                     @item.AccountNumber
+                  </td>
+                  <td>
+                     @item.BeneficiaryName
+                  </td>
+                  <td>
+                     @item.BankName
+                  </td>
+                  <td>
+                     @item.SWIFTCode
+                  </td>
+                  <td>
+                     @item.Amount
+                  </td>
+                  <td>
+                     @item.Date
+                  </td>
+                  @*<td>
+                        @Html.DisplayFor(modelItem => item.Date)@
+                     </td>*@
+                  <td>
+                     <a asp-action="Edit" asp-route-id="@item.TransactionId">Edit</a> |
+                     <a asp-action="Details" asp-route-id="@item.TransactionId">Details</a> |
+                     <a asp-action="Delete" asp-route-id="@item.TransactionId">Delete</a>
+                  </td>
+               </tr>
+            }
+         </tbody>
+      </table>
+   </div>
+   <div class="col-md-6">
+      <div class="form-group">
+         <label for="AccountNumber" class="control-label">Account Number</label>
+         <input id="AccountNumber" type="text" class="form-control" />
+      </div>
+      <div class="form-group">
+         <label for="BeneficiaryName" class="control-label">Beneficiary Name</label>
+         <input id="BeneficiaryName" type="text" class="form-control" />
+      </div>
+      <div class="form-group">
+         <label for="BankName" class="control-label">BankName</label>
+         <input id="BankName" type="text" class="form-control" />
+      </div>
+      <div class="form-group">
+         <label for="SWIFTCode" class="control-label">SWIFT Code</label>
+         <input id="SWIFTCode" type="text" class="form-control" />
+      </div>
+      <div class="form-group">
+         <label for="Amount" class="control-label">Amount</label>
+         <input id="Amount" type="text" class="form-control" />
+      </div>
+      <div class="form-group">
+         <label for="Date" class="control-label">Date</label>
+         <input id="Date" type="date" class="form-control" />
+      </div>
+      <div class="form-group">
+         <input type="button" value="Save" class="btn btn-primary" id="btnSave" />
+      </div>
+   </div>
+
+</div>
+@section Scripts {
+   <script>
+      $('#btnSave').click(function () {
+         var obj = {
+            AccountNumber: $("#AccountNumber").val(),
+            BeneficiaryName: $("#BeneficiaryName").val(),
+            BankName: $("#BankName").val(),
+            SWIFTCode: $("#SWIFTCode").val(),
+            Amount: $("#Amount").val(),
+            Date: $("#Date").val()
+         }
+         $.ajax({
+            url: "/TransectionModels/Create",
+            data: obj,
+            type="JSON",
+            method: "POST",
+            success: function (data) {
+               location.reload();
+            }
+         })
+      })
+   </script>
+}
